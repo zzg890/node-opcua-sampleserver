@@ -87,6 +87,7 @@ function constructAddressSpace(addressSpace: AddressSpace) {
   var simulator = namespace.addObject({ browseName: "Simulator", organizedBy: addressSpace.rootFolder.objects })
   namespace.addVariable({
     componentOf: simulator,
+    nodeId: "s=Simulator.Default.Device1.FLOAT1",
     browseName: "Simulator.Default.Device1.FLOAT1",
     dataType: "Double",
     value: {
@@ -97,6 +98,7 @@ function constructAddressSpace(addressSpace: AddressSpace) {
   });
   namespace.addVariable({
     componentOf: simulator,
+    nodeId: "s=Simulator.Default.Device1.FLOAT2",
     browseName: "Simulator.Default.Device1.FLOAT2",
     dataType: "Double",
     value: {
@@ -108,6 +110,7 @@ function constructAddressSpace(addressSpace: AddressSpace) {
 
   namespace.addVariable({
     componentOf: simulator,
+    nodeId: "s=Simulator.Default.Device1.INT1",
     browseName: "Simulator.Default.Device1.INT1",
     dataType: "Integer",
     value: {
@@ -119,7 +122,8 @@ function constructAddressSpace(addressSpace: AddressSpace) {
 
   namespace.addVariable({
     componentOf: simulator,
-    browseName: "Simulator.Default.Device1.INT1",
+    nodeId: "s=Simulator.Default.Device1.INT2",
+    browseName: "Simulator.Default.Device1.INT2",
     dataType: "Integer",
     value: {
       get: () => {
@@ -131,6 +135,7 @@ function constructAddressSpace(addressSpace: AddressSpace) {
 
   namespace.addVariable({
     componentOf: simulator,
+    nodeId: "s=Simulator.Default.Device1.BOOLEAN1",
     browseName: "Simulator.Default.Device1.BOOLEAN1",
     dataType: "Boolean",
     value: {
@@ -142,6 +147,7 @@ function constructAddressSpace(addressSpace: AddressSpace) {
 
   namespace.addVariable({
     componentOf: simulator,
+    nodeId: "s=Simulator.Default.Device1.BOOLEAN2",
     browseName: "Simulator.Default.Device1.BOOLEAN2",
     dataType: "Boolean",
     value: {
