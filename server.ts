@@ -7,12 +7,78 @@ import {
   VariantArrayType,
   MessageSecurityMode,
   SecurityPolicy,
-  AddressSpace
+  AddressSpace,
+  Namespace,
+  UAObject,
+  UADataType,
+  UAVariableType,
+  UAState,
+  StatusCode,
+  StatusCodes
 } from 'node-opcua';
 
+const store: { [key: string]: Variant } = {}
 /**
  * @param {IAddressSpace} addressSpace
  */
+
+function dataTypeStr(dataType: DataType) {
+  switch (dataType) {
+    case DataType.Boolean: {
+      return "Boolean"
+    }
+    case DataType.Int16:
+    case DataType.Int32:
+    case DataType.Int64:
+      {
+        return "Integer"
+      }
+    case DataType.Float:
+    case DataType.Double:
+      {
+        return DataType.Double
+
+      }
+    case DataType.String: {
+      return "String"
+    }
+
+    default: {
+      return ""
+    }
+
+  }
+}
+
+function addVariable(parent: UAObject, variableName: string, dataType: DataType, initialValue: any) {
+  store[variableName] = new Variant({ dataType: dataType, value: initialValue });
+  const namespace = parent.namespace;
+
+  namespace.addVariable({
+    componentOf: parent,
+    nodeId: `s=${variableName}`,
+    browseName: variableName,
+    minimumSamplingInterval: 500,
+    dataType: dataTypeStr(dataType),
+    accessLevel: 'CurrentRead | CurrentWrite',
+    userAccessLevel: 'CurrentRead | CurrentWrite',
+
+    value: {
+      get: () => {
+        return store[variableName];
+      },
+
+      set: (v, callback) => {
+        console.log(`set value ${v.value} to ${variableName}`)
+        store[variableName] = v;
+        callback(null, StatusCodes.Good);
+        return StatusCodes.Good;
+      }
+    }
+  });
+
+}
+
 function constructAddressSpace(addressSpace: AddressSpace) {
   const namespace = addressSpace.getOwnNamespace();
 
@@ -32,7 +98,8 @@ function constructAddressSpace(addressSpace: AddressSpace) {
     browseName: 'Temperature',
     dataType: 'Double',
     minimumSamplingInterval: 500,
-    accessLevel: 'CurrentRead',
+    accessLevel: 'CurrentRead | CurrentWrite',
+    userAccessLevel: 'CurrentRead | CurrentWrite',
     value: {
       get: () => {
         const t = new Date().getMilliseconds();
@@ -62,6 +129,7 @@ function constructAddressSpace(addressSpace: AddressSpace) {
     valueRank: 1
 
   });
+
   uaVariable3.setValueFromSource({
     dataType: DataType.Double,
     arrayType: VariantArrayType.Array,
@@ -84,78 +152,83 @@ function constructAddressSpace(addressSpace: AddressSpace) {
     }
   });
 
-  var simulator = namespace.addObject({ browseName: "Simulator", organizedBy: addressSpace.rootFolder.objects })
-  namespace.addVariable({
-    componentOf: simulator,
-    nodeId: "s=Simulator.Default.Device1.FLOAT1",
-    browseName: "Simulator.Default.Device1.FLOAT1",
-    dataType: "Double",
-    value: {
-      get: () => {
-        return new Variant({ dataType: DataType.Double, value: 1.0 })
-      }
-    }
+
+
+  const simulator = namespace.addFolder('ObjectsFolder', {
+    browseName: 'Simulator'
   });
-  namespace.addVariable({
-    componentOf: simulator,
-    nodeId: "s=Simulator.Default.Device1.FLOAT2",
-    browseName: "Simulator.Default.Device1.FLOAT2",
-    dataType: "Double",
-    value: {
-      get: () => {
-        return new Variant({ dataType: DataType.Double, value: 2.0 })
-      }
-    }
-  })
-
-  namespace.addVariable({
-    componentOf: simulator,
-    nodeId: "s=Simulator.Default.Device1.INT1",
-    browseName: "Simulator.Default.Device1.INT1",
-    dataType: "Integer",
-    value: {
-      get: () => {
-        return new Variant({ dataType: DataType.Int32, value: 1 })
-      }
-    }
-  })
-
-  namespace.addVariable({
-    componentOf: simulator,
-    nodeId: "s=Simulator.Default.Device1.INT2",
-    browseName: "Simulator.Default.Device1.INT2",
-    dataType: "Integer",
-    value: {
-      get: () => {
-        return new Variant({ dataType: DataType.Int32, value: 2 })
-      }
-    }
-  })
 
 
-  namespace.addVariable({
-    componentOf: simulator,
-    nodeId: "s=Simulator.Default.Device1.BOOLEAN1",
-    browseName: "Simulator.Default.Device1.BOOLEAN1",
-    dataType: "Boolean",
-    value: {
-      get: () => {
-        return new Variant({ dataType: DataType.Boolean, value: false })
-      }
-    }
-  })
+  let variableName = "Simulator.Default.Device1.FLOAT1";
+  let dataType = "Double"
 
-  namespace.addVariable({
-    componentOf: simulator,
-    nodeId: "s=Simulator.Default.Device1.BOOLEAN2",
-    browseName: "Simulator.Default.Device1.BOOLEAN2",
-    dataType: "Boolean",
-    value: {
-      get: () => {
-        return new Variant({ dataType: DataType.Boolean, value: true })
-      }
-    }
-  })
+  addVariable(simulator, "Simulator.Default.Device1.FLOAT1", DataType.Double, 1.0);
+  addVariable(simulator, "Simulator.Default.Device1.FLOAT2", DataType.Double, 2.0);
+  // namespace.addVariable({
+  //   componentOf: simulator,
+  //   nodeId: "s=Simulator.Default.Device1.FLOAT2",
+
+  //   browseName: "Simulator.Default.Device1.FLOAT2",
+  //   dataType: "Double",
+  //   value: {
+  //     get: () => {
+  //       return new Variant({ dataType: DataType.Double, value: 2.0 })
+  //     }
+  //   }
+  // })
+
+  addVariable(simulator, "Simulator.Default.Device1.INT1", DataType.Int32, 1);
+  // namespace.addVariable({
+  //   componentOf: simulator,
+  //   nodeId: "s=Simulator.Default.Device1.INT1",
+  //   browseName: "Simulator.Default.Device1.INT1",
+  //   dataType: "Integer",
+  //   value: {
+  //     get: () => {
+  //       return new Variant({ dataType: DataType.Int32, value: 1 })
+  //     }
+  //   }
+  // })
+
+  addVariable(simulator, "Simulator.Default.Device1.INT2", DataType.Int32, 2);
+  // namespace.addVariable({
+  //   componentOf: simulator,
+  //   nodeId: "s=Simulator.Default.Device1.INT2",
+  //   browseName: "Simulator.Default.Device1.INT2",
+  //   dataType: "Integer",
+  //   value: {
+  //     get: () => {
+  //       return new Variant({ dataType: DataType.Int32, value: 2 })
+  //     }
+  //   }
+  // })
+
+
+  addVariable(simulator, "Simulator.Default.Device1.BOOLEAN1", DataType.Boolean, true);
+  // namespace.addVariable({
+  //   componentOf: simulator,
+  //   nodeId: "s=Simulator.Default.Device1.BOOLEAN1",
+  //   browseName: "Simulator.Default.Device1.BOOLEAN1",
+  //   dataType: "Boolean",
+  //   value: {
+  //     get: () => {
+  //       return new Variant({ dataType: DataType.Boolean, value: false })
+  //     }
+  //   }
+  // })
+
+  addVariable(simulator, "Simulator.Default.Device1.BOOLEAN2", DataType.Boolean, false);
+  // namespace.addVariable({
+  //   componentOf: simulator,
+  //   nodeId: "s=Simulator.Default.Device1.BOOLEAN2",
+  //   browseName: "Simulator.Default.Device1.BOOLEAN2",
+  //   dataType: "Boolean",
+  //   value: {
+  //     get: () => {
+  //       return new Variant({ dataType: DataType.Boolean, value: true })
+  //     }
+  //   }
+  // })
 
 }
 
@@ -163,8 +236,10 @@ function constructAddressSpace(addressSpace: AddressSpace) {
   try {
     // Let create an instance of OPCUAServer
     const server = new OPCUAServer({
-      port: 26543, // the port of the listening socket of the server
+      port: 4334, // the port of the listening socket of the server
 
+
+      allowAnonymous: true,
       nodeset_filename: [
         nodesets.standard,
         nodesets.di
