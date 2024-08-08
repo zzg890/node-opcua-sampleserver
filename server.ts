@@ -16,7 +16,7 @@ import {
 function constructAddressSpace(addressSpace: AddressSpace) {
   const namespace = addressSpace.getOwnNamespace();
 
-  
+
   // we create a new folder under RootFolder
   const myDevice = namespace.addFolder('ObjectsFolder', {
     browseName: 'MyDevice'
@@ -83,6 +83,74 @@ function constructAddressSpace(addressSpace: AddressSpace) {
       }
     }
   });
+
+  var simulator = namespace.addObject({ browseName: "Simulator", organizedBy: addressSpace.rootFolder.objects })
+  namespace.addVariable({
+    componentOf: simulator,
+    browseName: "Simulator.Default.Device1.FLOAT1",
+    dataType: "Double",
+    value: {
+      get: () => {
+        return new Variant({ dataType: DataType.Double, value: 1.0 })
+      }
+    }
+  });
+  namespace.addVariable({
+    componentOf: simulator,
+    browseName: "Simulator.Default.Device1.FLOAT2",
+    dataType: "Double",
+    value: {
+      get: () => {
+        return new Variant({ dataType: DataType.Double, value: 2.0 })
+      }
+    }
+  })
+
+  namespace.addVariable({
+    componentOf: simulator,
+    browseName: "Simulator.Default.Device1.INT1",
+    dataType: "Integer",
+    value: {
+      get: () => {
+        return new Variant({ dataType: DataType.Int32, value: 1 })
+      }
+    }
+  })
+
+  namespace.addVariable({
+    componentOf: simulator,
+    browseName: "Simulator.Default.Device1.INT1",
+    dataType: "Integer",
+    value: {
+      get: () => {
+        return new Variant({ dataType: DataType.Int32, value: 2 })
+      }
+    }
+  })
+
+
+  namespace.addVariable({
+    componentOf: simulator,
+    browseName: "Simulator.Default.Device1.BOOLEAN1",
+    dataType: "Boolean",
+    value: {
+      get: () => {
+        return new Variant({ dataType: DataType.Boolean, value: false })
+      }
+    }
+  })
+
+  namespace.addVariable({
+    componentOf: simulator,
+    browseName: "Simulator.Default.Device1.BOOLEAN2",
+    dataType: "Boolean",
+    value: {
+      get: () => {
+        return new Variant({ dataType: DataType.Boolean, value: true })
+      }
+    }
+  })
+
 }
 
 (async () => {
