@@ -10,11 +10,13 @@
     "@eslint/js": "^9.8.0",
     "eslint": "^9.8.0",
     "globals": "^15.9.0",
-    "source-map-support": "^0.5.21"
+    "source-map-support": "^0.5.21",
+    "ts-node": "^10.9.2"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.mjs",
+    "ts-node":"ts-node",
+    "start": "ts-node server.ts",
     "lint": "npx eslint ."
   },
   "author": "Etienne Rossignon <etienne.rossignon@gadz.org>",
