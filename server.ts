@@ -79,6 +79,38 @@ function addVariable(parent: UAObject, variableName: string, dataType: DataType,
 
 }
 
+function addArrayVariable(parent: UAObject, variableName: string, dataType: DataType, initialValues: any[]) {
+  store[variableName] = new Variant({ dataType: dataType, value: initialValues, arrayType: VariantArrayType.Array });
+  const namespace = parent.namespace;
+
+  namespace.addVariable({
+    componentOf: parent,
+    nodeId: `s=${variableName}`,
+    browseName: variableName,
+    minimumSamplingInterval: 500,
+    dataType: dataTypeStr(dataType),
+    accessLevel: 'CurrentRead | CurrentWrite',
+    userAccessLevel: 'CurrentRead | CurrentWrite',
+
+    value: {
+      get: () => {
+        return store[variableName];
+      },
+
+      set: (v, callback) => {
+        console.log(`set value ${v.value} to ${variableName}`)
+        store[variableName] = v;
+        callback(null, StatusCodes.Good);
+        return StatusCodes.Good;
+      }
+    }
+  });
+
+}
+
+
+
+
 function constructAddressSpace(addressSpace: AddressSpace) {
   const namespace = addressSpace.getOwnNamespace();
 
@@ -159,76 +191,26 @@ function constructAddressSpace(addressSpace: AddressSpace) {
   });
 
 
-  let variableName = "Simulator.Default.Device1.FLOAT1";
-  let dataType = "Double"
-
   addVariable(simulator, "Simulator.Default.Device1.FLOAT1", DataType.Double, 1.0);
   addVariable(simulator, "Simulator.Default.Device1.FLOAT2", DataType.Double, 2.0);
-  // namespace.addVariable({
-  //   componentOf: simulator,
-  //   nodeId: "s=Simulator.Default.Device1.FLOAT2",
 
-  //   browseName: "Simulator.Default.Device1.FLOAT2",
-  //   dataType: "Double",
-  //   value: {
-  //     get: () => {
-  //       return new Variant({ dataType: DataType.Double, value: 2.0 })
-  //     }
-  //   }
-  // })
 
   addVariable(simulator, "Simulator.Default.Device1.INT1", DataType.Int32, 1);
-  // namespace.addVariable({
-  //   componentOf: simulator,
-  //   nodeId: "s=Simulator.Default.Device1.INT1",
-  //   browseName: "Simulator.Default.Device1.INT1",
-  //   dataType: "Integer",
-  //   value: {
-  //     get: () => {
-  //       return new Variant({ dataType: DataType.Int32, value: 1 })
-  //     }
-  //   }
-  // })
+
 
   addVariable(simulator, "Simulator.Default.Device1.INT2", DataType.Int32, 2);
-  // namespace.addVariable({
-  //   componentOf: simulator,
-  //   nodeId: "s=Simulator.Default.Device1.INT2",
-  //   browseName: "Simulator.Default.Device1.INT2",
-  //   dataType: "Integer",
-  //   value: {
-  //     get: () => {
-  //       return new Variant({ dataType: DataType.Int32, value: 2 })
-  //     }
-  //   }
-  // })
 
 
   addVariable(simulator, "Simulator.Default.Device1.BOOLEAN1", DataType.Boolean, true);
-  // namespace.addVariable({
-  //   componentOf: simulator,
-  //   nodeId: "s=Simulator.Default.Device1.BOOLEAN1",
-  //   browseName: "Simulator.Default.Device1.BOOLEAN1",
-  //   dataType: "Boolean",
-  //   value: {
-  //     get: () => {
-  //       return new Variant({ dataType: DataType.Boolean, value: false })
-  //     }
-  //   }
-  // })
+
 
   addVariable(simulator, "Simulator.Default.Device1.BOOLEAN2", DataType.Boolean, false);
-  // namespace.addVariable({
-  //   componentOf: simulator,
-  //   nodeId: "s=Simulator.Default.Device1.BOOLEAN2",
-  //   browseName: "Simulator.Default.Device1.BOOLEAN2",
-  //   dataType: "Boolean",
-  //   value: {
-  //     get: () => {
-  //       return new Variant({ dataType: DataType.Boolean, value: true })
-  //     }
-  //   }
-  // })
+
+
+  addVariable(simulator, "Simulator.Default.Device1.STRING1", DataType.String, "StringA");
+
+  addVariable(simulator, "Simulator.Default.Device1.STRING2", DataType.String, "StringB");
+
 
 }
 
