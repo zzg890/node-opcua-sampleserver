@@ -91,7 +91,7 @@ function addArrayVariable(parent: UAObject, variableName: string, dataType: Data
     dataType: dataTypeStr(dataType),
     accessLevel: 'CurrentRead | CurrentWrite',
     userAccessLevel: 'CurrentRead | CurrentWrite',
-
+    arrayDimensions: [initialValues.length],
     value: {
       get: () => {
         return store[variableName];
