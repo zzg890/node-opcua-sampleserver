@@ -211,6 +211,9 @@ function constructAddressSpace(addressSpace: AddressSpace) {
 
   addVariable(simulator, "Simulator.Default.Device1.STRING2", DataType.String, "StringB");
 
+  addArrayVariable(simulator, "Simulator.Default.Device1.FLOAT_ARRAY1", DataType.Double, [1.0, 2.0, 3.0]);
+  addArrayVariable(simulator, "Simulator.Default.Device1.INT_ARRAY1", DataType.Double, [1, 2, 3]);
+  addArrayVariable(simulator, "Simulator.Default.Device1.BOOLEAN_ARRAY1", DataType.Double, [true, false, true]);
 
 }
 
